@@ -717,7 +717,14 @@ async def makeButtons(bot: Client, m: Message, db: dict):
     return markup
 
 
+import asyncio
+from aiohttp import web
+from pyrogram import Client
+from config import Config
+# Assuming your logger is defined here
+
 LOGCHANNEL = Config.LOGCHANNEL
+
 try:
     if Config.USER_SESSION_STRING is None:
         raise KeyError
@@ -733,22 +740,51 @@ except KeyError:
     LOGGER.warning("No User Session, Default Bot session will be used")
 
 
-if __name__ == "__main__":
-    # with mergeApp:
-    #     bot:User = mergeApp.get_me()
-    #     bot_username = bot.username
+async def start_bot():
+    """Start the userBot and mergeApp together."""
     try:
-        with userBot:
-            userBot.send_message(
+        if userBot:
+            await userBot.start()
+            await userBot.send_message(
                 chat_id=int(LOGCHANNEL),
                 text="Bot booted with Premium Account,\n\n  Thanks for using <a href='https://github.com/yashoswalyo/merge-bot'>this repo</a>",
                 disable_web_page_preview=True,
             )
-            user = userBot.get_me()
+            user = await userBot.get_me()
             Config.IS_PREMIUM = user.is_premium
-    except Exception as err:
-        LOGGER.error(f"{err}")
-        Config.IS_PREMIUM = False
-        pass
+        else:
+            Config.IS_PREMIUM = False
 
-    mergeApp.run()
+        LOGGER.info("Starting main bot...")
+        await mergeApp.start()
+        LOGGER.info("Merge bot is now running...")
+
+    except Exception as err:
+        LOGGER.error(f"Error starting bot: {err}")
+        Config.IS_PREMIUM = False
+
+
+# ----------- AIOHTTP WEB SERVER -----------
+async def handle(request):
+    return web.Response(text="Bot is running successfully 🚀")
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get("/", handle)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    # Koyeb requires binding to port 8080
+    site = web.TCPSite(runner, "0.0.0.0", 8080)
+    await site.start()
+    LOGGER.info("Web server running on port 8080")
+
+
+# ----------- MAIN FUNCTION -----------
+async def main():
+    await asyncio.gather(
+        start_web_server(),
+        start_bot(),
+    )
+
+if __name__ == "__main__":
+    asyncio.run(main())
