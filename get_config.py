@@ -3,9 +3,9 @@ from __init__ import LOGGER
 import os
 import subprocess
 from dotenv import load_dotenv
-CONFIG_FILE_URL = https://github.com/Ckbotz/MERGE-BOT/blob/master/config.py
+CONFIG_FILE_URL = "https://github.com/Ckbotz/MERGE-BOT/blob/master/config.py"
 
-CONFIG_FILE_URL = os.environ.get('CONFIG_FILE_URL')
+CONFIG_FILE_URL = os.environ.get('https://github.com/Ckbotz/MERGE-BOT/blob/master/config.py')
 try:
     if len(CONFIG_FILE_URL) == 0:
         raise TypeError
@@ -26,8 +26,8 @@ load_dotenv(
     override=True,
 )
 # tired of redeploying :(
-UPSTREAM_REPO = os.environ.get('UPSTREAM_REPO')
-UPSTREAM_BRANCH = os.environ.get('UPSTREAM_BRANCH')
+UPSTREAM_REPO = os.environ.get('https://github.com/Ckbotz/MERGE-BOT')
+UPSTREAM_BRANCH = os.environ.get('master')
 try:
     if len(UPSTREAM_REPO) == 0:
        raise TypeError
