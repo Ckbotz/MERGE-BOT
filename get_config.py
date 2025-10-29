@@ -6,25 +6,22 @@ from dotenv import load_dotenv
 CONFIG_FILE_URL = "https://github.com/Ckbotz/MERGE-BOT/blob/master/config.py"
 
 CONFIG_FILE_URL = os.environ.get('https://github.com/Ckbotz/MERGE-BOT/blob/master/config.py')
+
 try:
-    if len(CONFIG_FILE_URL) == 0:
-        raise TypeError
-    try:
+    if not CONFIG_FILE_URL:  # safe check for None or empty
+        LOGGER.warning("CONFIG_FILE_URL not set! Skipping remote config download.")
+    else:
         res = rget(CONFIG_FILE_URL)
         if res.status_code == 200:
             with open('config.env', 'wb+') as f:
                 f.write(res.content)
+            LOGGER.info("Downloaded config.env successfully.")
         else:
-            LOGGER.error(f"Failed to download config.env {res.status_code}")
-    except Exception as e:
-        LOGGER.error(f"CONFIG_FILE_URL: {e}")
+            LOGGER.error(f"Failed to download config.env, status: {res.status_code}")
 except Exception as e:
-    LOGGER.error(e)
-    pass
-load_dotenv(
-    "config.env",
-    override=True,
-)
+    LOGGER.error(f"Error while fetching CONFIG_FILE_URL: {e}")
+
+load_dotenv("config.env", override=True)
 # tired of redeploying :(
 UPSTREAM_REPO = os.environ.get('https://github.com/Ckbotz/MERGE-BOT')
 UPSTREAM_BRANCH = os.environ.get('master')
