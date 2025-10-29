@@ -49,20 +49,26 @@ from helpers.utils import UserSettings, get_readable_file_size, get_readable_tim
 botStartTime = time.time()
 parent_id = Config.GDRIVE_FOLDER_ID
 
+from pyrogram import Client
+from config import Config
+from __init__ import LOGGER
+import asyncio
 
 class MergeBot(Client):
-    def start(self):
-        super().start()
+    async def start(self):
+        await super().start()
         try:
-            self.send_message(chat_id=int(Config.OWNER), text="<b>Bot Started!</b>")
+            await self.send_message(
+                chat_id=int(Config.OWNER),
+                text="<b>Bot Started!</b>"
+            )
         except Exception as err:
-            LOGGER.error("Boot alert failed! Please start bot in PM")
-        return LOGGER.info("Bot Started!")
+            LOGGER.error(f"Boot alert failed! Please start bot in PM. Error: {err}")
+        LOGGER.info("Bot Started!")
 
-    def stop(self):
-        super().stop()
-        return LOGGER.info("Bot Stopped")
-
+    async def stop(self):
+        await super().stop()
+        LOGGER.info("Bot Stopped")
 
 mergeApp = MergeBot(
     name="merge-bot",
