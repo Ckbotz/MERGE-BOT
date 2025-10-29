@@ -3,6 +3,7 @@ from __init__ import LOGGER
 import os
 import subprocess
 from dotenv import load_dotenv
+CONFIG_FILE_URL= https://raw.githubusercontent.com/Ckbotz/MERGE-BOT/refs/heads/master/config.py
 
 CONFIG_FILE_URL = os.environ.get('CONFIG_FILE_URL')
 try:
